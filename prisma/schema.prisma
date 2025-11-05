@@ -1,0 +1,30 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model QueueTickets {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  appointmentId  String   @unique @db.ObjectId
+  ticketNumber   Int
+  status         QueueStatus @default(WAITING)
+  calledAt       DateTime?
+  completedAt    DateTime?
+  estimatedWait  Int
+  createdAt      DateTime @default(now())
+
+  @@map("QueueTickets")
+}
+
+enum QueueStatus {
+  WAITING
+  CALLED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
